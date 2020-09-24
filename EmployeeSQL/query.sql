@@ -81,11 +81,113 @@ REFERENCES "titles" ("title_id");
 CREATE INDEX "idx_departments_dept_name"
 ON "departments" ("dept_name");
 
+-- List of employee: emp_no, last_name, first_name, sex and salary
 SELECT e.emp_no, e.last_name, e.first_name, e.sex, s.salary
 FROM employees as e
 INNER JOIN salaries as s ON
 e.emp_no = s.emp_no;
 
+-- List of last_name, first_name and hire date of employees hired in 1986
 SELECT first_name, last_name, hire_date 
 from employees 
-WHERE hire_date like '%1986';
+WHERE hire_date like %1986;
+
+-- List of manager in each department with department no, department name, emp_no, last_name and first_name
+SELECT d.dept_no, d.dept_name, dm.emp_no, e.last_name, e.first_name
+FROM employees as e
+WHERE emp_no IN
+(
+  SELECT emp_no
+  FROM dept_manager as dm
+  WHERE dept_no IN
+  (
+    SELECT dept_no
+    FROM departments as d
+      )
+	);
+	
+SELECT d.dept_no, d.dept_name, dm.emp_no, e.last_name, e.first_name
+from departments as d
+inner join dept_manager as dm ON
+d.dept_no = dm.dept_no
+inner  join employees as e ON 
+dm.emp_no = e.emp_no;
+
+-- List of emp_no, last_name, first_name and department name
+SELECT e.emp_no, e.last_name, e.first_name, d.dept_name 
+FROM departments as d
+WHERE dept_no IN
+(
+  SELECT dept_no
+  FROM dept_emp as de
+  WHERE emp_no IN
+  (
+    SELECT emp_no
+    FROM employees as e
+      )
+	);
+
+SELECT e.emp_no, e.last_name, e.first_name, d.dept_name
+from employees as e
+inner join dept_emp as de ON
+e.emp_no = de.emp_no
+inner  join departments as d ON 
+de.dept_no = d.dept_no;
+
+-- List of first_name, last_name and sex for employees where first name is "Hercules" and last name begin with "B"
+SELECT first_name, last_name, sex
+from employees
+where first_name = 'Hercules'
+AND last_name like 'B%';
+
+-- List of emp_no, last_name, first_name and department name in the Sales department
+SELECT e.emp_no, e.last_name, e.first_name, d.dept_name
+FROM employees as e
+WHERE emp_no IN
+(
+  SELECT emp_no
+  FROM dept_emp as de
+  WHERE dept_no IN
+  (
+    SELECT dept_no
+    FROM departments as d
+      WHERE dept_name = 'Sales')
+	);
+	
+SELECT e.emp_no, e.last_name, e.first_name, d.dept_name
+from employees as e
+inner join dept_emp as de ON
+e.emp_no = de.emp_no
+inner  join departments as d ON 
+de.dept_no = d.dept_no
+WHERE dept_name = 'Sales';
+
+-- List of emp_no, last_name, first_name and department name in the Sales and Development department
+SELECT e.emp_no, e.last_name, e.first_name, d.dept_name
+FROM employees as e
+WHERE emp_no IN
+(
+  SELECT emp_no
+  FROM dept_emp as de
+  WHERE dept_no IN
+  (
+    SELECT dept_no
+    FROM departments as d
+      WHERE dept_name = 'Sales'
+  OR dept_name = 'Research')
+	);
+	
+SELECT e.emp_no, e.last_name, e.first_name, d.dept_name
+from employees as e
+inner join dept_emp as de ON
+e.emp_no = de.emp_no
+inner  join departments as d ON 
+de.dept_no = d.dept_no
+WHERE dept_name = 'Sales' 
+OR dept_name = 'Research';
+
+-- Count of employee last name in descending order
+SELECT last_name, COUNT(last_name) as count
+FROM employees
+GROUP BY last_name 
+ORDER BY count DESC;
