@@ -90,22 +90,9 @@ e.emp_no = s.emp_no;
 -- List of last_name, first_name and hire date of employees hired in 1986
 SELECT first_name, last_name, hire_date 
 from employees 
-WHERE hire_date like %1986;
+WHERE to_char(hire_date, 'DD/MM/YYYY') LIKE '__/__/1986';
 
 -- List of manager in each department with department no, department name, emp_no, last_name and first_name
-SELECT d.dept_no, d.dept_name, dm.emp_no, e.last_name, e.first_name
-FROM employees as e
-WHERE emp_no IN
-(
-  SELECT emp_no
-  FROM dept_manager as dm
-  WHERE dept_no IN
-  (
-    SELECT dept_no
-    FROM departments as d
-      )
-	);
-	
 SELECT d.dept_no, d.dept_name, dm.emp_no, e.last_name, e.first_name
 from departments as d
 inner join dept_manager as dm ON
@@ -114,18 +101,6 @@ inner  join employees as e ON
 dm.emp_no = e.emp_no;
 
 -- List of emp_no, last_name, first_name and department name
-SELECT e.emp_no, e.last_name, e.first_name, d.dept_name 
-FROM departments as d
-WHERE dept_no IN
-(
-  SELECT dept_no
-  FROM dept_emp as de
-  WHERE emp_no IN
-  (
-    SELECT emp_no
-    FROM employees as e
-      )
-	);
 
 SELECT e.emp_no, e.last_name, e.first_name, d.dept_name
 from employees as e
@@ -141,18 +116,6 @@ where first_name = 'Hercules'
 AND last_name like 'B%';
 
 -- List of emp_no, last_name, first_name and department name in the Sales department
-SELECT e.emp_no, e.last_name, e.first_name, d.dept_name
-FROM employees as e
-WHERE emp_no IN
-(
-  SELECT emp_no
-  FROM dept_emp as de
-  WHERE dept_no IN
-  (
-    SELECT dept_no
-    FROM departments as d
-      WHERE dept_name = 'Sales')
-	);
 	
 SELECT e.emp_no, e.last_name, e.first_name, d.dept_name
 from employees as e
@@ -163,19 +126,6 @@ de.dept_no = d.dept_no
 WHERE dept_name = 'Sales';
 
 -- List of emp_no, last_name, first_name and department name in the Sales and Development department
-SELECT e.emp_no, e.last_name, e.first_name, d.dept_name
-FROM employees as e
-WHERE emp_no IN
-(
-  SELECT emp_no
-  FROM dept_emp as de
-  WHERE dept_no IN
-  (
-    SELECT dept_no
-    FROM departments as d
-      WHERE dept_name = 'Sales'
-  OR dept_name = 'Research')
-	);
 	
 SELECT e.emp_no, e.last_name, e.first_name, d.dept_name
 from employees as e
